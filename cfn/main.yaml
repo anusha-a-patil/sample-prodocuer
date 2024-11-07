@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation template to create an S3 bucket
 
 Parameters:
-#S3 Parameters  
   EnvType:
     Type: String
     Default: "dev"
@@ -10,11 +9,36 @@ Parameters:
   DomainName:
     Type: String
     Description: The name of the domain
-  BucketFilePath:
+#ResourceLink Parameters
+  GovernanceAccountId:
     Type: String
-    Description: bucket yaml path
+    Description: 'Governance Account ID'
+    Default: "903432419063"
+  GovernanceDatabaseName:
+    Type: String
+    Description: 'Governance Database Name'
+    Default: "sandbox---db"    
+  ResourcelinkPath:
+    Type: String
+    Description: 'Resource Link yaml path Parameters'
+#LF Parameters
+  lfPath:
+    Type: String
+    Description: 'LF Stack S3 URL of the nested stack template'    
+  CodeBuildRole:
+    Type: String
+    Description: 'Code Build Role Which is used to build all CF reosurces'
+    Default: "codebuild-sample-producer-service-role"
 
-Resources:
+Resources:    
+  GlueDBResourceLink:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref ResourcelinkPath
+      Parameters:
+        GovernanceAccountId: !Ref GovernanceAccountId
+        GovernanceDatabaseName: !Ref GovernanceDatabaseName
+
   s3buckets:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -23,7 +47,20 @@ Resources:
         EnvType: !Ref EnvType
         DomainName: !Ref DomainName
 
+  LakeFormationStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref lfPath
+      Parameters:
+        CodeBuildRole: !Ref CodeBuildRole      
+
 Outputs:
-  TrustedBucketName:
+  AthenaOutputS3Bucket:
     Description: The name of the Landing S3 bucket
-    Value: !GetAtt s3buckets.Outputs.TrustedBucketName        
+    Value: !GetAtt s3buckets.Outputs.AthenaOutputS3Bucket
+
+  GlueDBResourceLink:
+    Description: 'Resource Link of the shared Glue Database'
+    Value: !GetAtt GlueDBResourceLink.Outputs.ResourceLink        
+
+        

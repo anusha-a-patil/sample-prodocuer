@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Nested stack for creating AWS Lake Formation resources'
+
+Parameters:
+  DatabaseName:
+    Type: String
+    Description: 'Name of the Glue Database to store the crawled data'
+  ConsumerRole:
+    Type: String
+    Description: 'IAM Role of Consumer'
+
+Resources:  
+  LFPermissionsConsumer:
+    Type: AWS::LakeFormation::PrincipalPermissions
+    Properties:
+      Resource:
+        Database:
+          CatalogId: !Ref AWS::AccountId  # Account ID where S3 bucket is registered
+          Name: !Ref DatabaseName
+      Principal:
+        DataLakePrincipalIdentifier: !Ref ConsumerRole
+      Permissions:
+        - "DESCRIBE"
+      PermissionsWithGrantOption: []
+
+  LFPermissionsConsumerTables:
+    Type: AWS::LakeFormation::PrincipalPermissions
+    Properties:
+      Resource:
+        Table:
+          CatalogId: !Ref AWS::AccountId
+          DatabaseName: !Ref DatabaseName
+          TableWildcard: {}
+      Principal:
+        DataLakePrincipalIdentifier: !Ref ConsumerRole
+      Permissions:
+        - "SELECT"
+        - "DESCRIBE"
+      PermissionsWithGrantOption: []

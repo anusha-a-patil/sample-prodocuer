@@ -11,15 +11,19 @@ Parameters:
     Type: String
     Description: The name of the domain
 
+
 Resources:
-  TrustedS3Bucket:
+  AthenaOutputS3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: Sample-Trusted-Bucket
+      BucketName: 
+         Fn::Join:
+          - "-"
+          - [ "sanbox", !Ref DomainName, !Ref EnvType, "Athena-Output"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
-            SSEAlgorithm: AES256        
+            SSEAlgorithm: AES256 
       VersioningConfiguration:
         Status: Enabled
       AccessControl: Private
@@ -27,16 +31,9 @@ Resources:
         Rules:
           - Id: ExpireOldVersions
             Status: Enabled
-            NoncurrentVersionExpirationInDays: 30  
-      Tags:
-        - Key: 'EnvType'
-          Value: !Ref EnvType
-        - Key: 'DomainName'
-          Value: !Ref DomainName
-
+            NoncurrentVersionExpirationInDays: 30
 
 Outputs:
-  TrustedBucketName:
-    Description: The name of the Enriched S3 bucket
-    Value: !Ref TrustedS3Bucket
-
+  AthenaOutputS3Bucket:
+    Description: The name of the Athena Output S3 bucket
+    Value: !Ref AthenaOutputS3Bucket            
