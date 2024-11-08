@@ -2,13 +2,17 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation template to create an S3 bucket
 
 Parameters:
+#S3 Parameters  
   EnvType:
     Type: String
     Default: "dev"
-    Description: The environment type (e.g., prod, dev)
+    Description: 'The environment type (e.g., prod, dev)'
   DomainName:
     Type: String
-    Description: The name of the domain
+    Description: 'The name of the domain'
+  BucketFilePath:
+    Type: String
+    Description: 'bucket yaml path'
 #ResourceLink Parameters
   GovernanceAccountId:
     Type: String
