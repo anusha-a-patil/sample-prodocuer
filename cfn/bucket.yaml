@@ -19,7 +19,7 @@ Resources:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ "sanbox", !Ref DomainName, !Ref EnvType, "Athena-Output"]
+          - [ "sanbox", !Ref DomainName, !Ref EnvType, "athena-output"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:

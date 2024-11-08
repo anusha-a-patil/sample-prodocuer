@@ -12,7 +12,6 @@ Resources:
     Description: Adding Data Lake Admins    
     Properties: 
       Admins: 
-        - DataLakePrincipalIdentifier: !Sub 'arn:aws:iam::${AWS::AccountId}:role/root' #Role used by you to access the account
         - DataLakePrincipalIdentifier: !Sub 'arn:aws:iam::${AWS::AccountId}:role/service-role/${CodeBuildRole}'
       CreateDatabaseDefaultPermissions: []  #Empty list to uncheck default settings
       CreateTableDefaultPermissions: []  #Empty list to uncheck default settings
